@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tareas del equipo</title>
+</head>
+<body>
+    <h1>Tareas del equipo</h1>
+
+    <p><a href="{% url 'crear_tarea' %}">Crear tarea</a></p>
+
+    <ul>
+        {% for tarea in tareas %}
+            <li>
+                <a href="{% url 'detalle_tarea' tarea.pk %}">{{ tarea.titulo }}</a>
+                — {{ tarea.responsable }} — {{ tarea.get_estado_display }}
+            </li>
+        {% empty %}
+            <li>No hay tareas registradas.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

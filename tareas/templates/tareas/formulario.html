@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo }}</title>
+</head>
+<body>
+    <h1>{{ titulo }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+
+    {% if tarea %}
+        <p><a href="{% url 'detalle_tarea' tarea.pk %}">Cancelar</a></p>
+    {% else %}
+        <p><a href="{% url 'lista_tareas' %}">Cancelar</a></p>
+    {% endif %}
+</body>
+</html>
