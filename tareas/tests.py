@@ -37,3 +37,5 @@ class TareaCrudTests(TestCase):
         response = self.client.post(reverse('eliminar_tarea', args=[tarea.pk]))
         self.assertRedirects(response, reverse('lista_tareas'))
         self.assertFalse(Tarea.objects.filter(pk=tarea.pk).exists())
+        
+        

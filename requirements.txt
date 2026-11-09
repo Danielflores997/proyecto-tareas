@@ -1,1 +1,2 @@
 Django==6.1.1
+whitenoise>=6.8,<7

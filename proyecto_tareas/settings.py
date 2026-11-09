@@ -1,13 +1,17 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'clave-de-desarrollo-no-usar-en-produccion'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'clave-de-desarrollo-no-usar-en-produccion')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    o for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -20,6 +24,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,7 +56,7 @@ WSGI_APPLICATION = 'proyecto_tareas.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+                'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -64,5 +69,19 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ 
+
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'lista_tareas'
+LOGOUT_REDIRECT_URL = 'login'
+
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
