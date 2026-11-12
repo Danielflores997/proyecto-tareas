@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: "${SECRET_KEY:-clave-local-de-desarrollo}"
+      DEBUG: "False"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+      SQLITE_PATH: "/data/db.sqlite3"
+      PORT: "8000"
+    volumes:
+      - tareas_data:/data
+    restart: unless-stopped
+
+volumes:
+  tareas_data:

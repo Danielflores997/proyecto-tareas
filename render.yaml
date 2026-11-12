@@ -1,0 +1,29 @@
+# Render Blueprint: Django + Docker + PostgreSQL (plan gratuito).
+# La base de datos gratuita de Render tiene limite de 30 dias.
+services:
+  - type: web
+    name: gestor-tareas-uninpahu
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gestor-tareas-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PORT
+        value: "10000"
+      - key: ALLOWED_HOSTS
+        value: "localhost,127.0.0.1"
+
+databases:
+  - name: gestor-tareas-db
+    plan: free
+    databaseName: gestor_tareas
+    user: gestor_tareas

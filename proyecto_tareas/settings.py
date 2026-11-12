@@ -7,11 +7,28 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'clave-de-desarrollo-no-usar-en-produc
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()
+]
+
+# Render provides the public hostname and URL automatically at runtime.
+render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_hostname and render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_hostname)
 
 CSRF_TRUSTED_ORIGINS = [
-    o for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o
+    origin.strip()
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
 ]
+render_external_url = os.environ.get('RENDER_EXTERNAL_URL')
+if render_external_url and render_external_url not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(render_external_url)
+
+# Render terminates HTTPS at its proxy and forwards the original scheme.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,12 +70,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'proyecto_tareas.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+
+    DATABASES = {
+        'default': dj_database_url.parse(
+            os.environ['DATABASE_URL'],
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    # Local development and Docker Compose continue using SQLite.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
+        }
+    }
 
 LANGUAGE_CODE = 'es'
 
