@@ -22,6 +22,11 @@
 
     <p><a href="{% url 'crear_tarea' %}">Crear tarea</a></p>
 
+    <form method="post" action="{% url 'resumen_equipo_ia' %}" onsubmit="var b=this.querySelector('button');b.disabled=true;b.textContent='Generando resumen con IA… puede tardar hasta 1 minuto';">
+        {% csrf_token %}
+        <button type="submit">Resumen del equipo con IA</button>
+    </form>
+
     <ul>
         {% for tarea in tareas %}
             <li>

@@ -1,3 +1,7 @@
+# Gestor de Tareas: Django (web) + microservicio Node.js de IA (ia).
+#   cp .env.example .env     # y completar GEMINI_API_KEY
+#   docker compose up --build
+# Django:  http://localhost:8000      Swagger:  http://localhost:3000/api-docs
 services:
   web:
     build: .
@@ -9,8 +13,36 @@ services:
       ALLOWED_HOSTS: "localhost,127.0.0.1"
       SQLITE_PATH: "/data/db.sqlite3"
       PORT: "8000"
+      # Comunicacion Django -> Node.js por la red interna de Compose
+      NODE_SERVICE_URL: "http://ia:3000"
+      NODE_SERVICE_API_KEY: "${SERVICE_API_KEY:-clave-local-de-desarrollo-cambiar}"
+      # Opcionales: crean el usuario de /admin al arrancar
+      DJANGO_SUPERUSER_USERNAME: "${DJANGO_SUPERUSER_USERNAME:-}"
+      DJANGO_SUPERUSER_EMAIL: "${DJANGO_SUPERUSER_EMAIL:-admin@example.com}"
+      DJANGO_SUPERUSER_PASSWORD: "${DJANGO_SUPERUSER_PASSWORD:-}"
     volumes:
       - tareas_data:/data
+    depends_on:
+      ia:
+        condition: service_healthy
+    restart: unless-stopped
+
+  ia:
+    build: ./microservicio-ia
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      SERVICE_API_KEY: "${SERVICE_API_KEY:-clave-local-de-desarrollo-cambiar}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      GEMINI_MODEL: "${GEMINI_MODEL:-gemini-3.5-flash-lite}"
+      GEMINI_FALLBACK_MODEL: "${GEMINI_FALLBACK_MODEL:-gemini-3.5-flash}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     restart: unless-stopped
 
 volumes:

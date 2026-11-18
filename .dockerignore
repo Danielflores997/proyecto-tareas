@@ -8,3 +8,5 @@ staticfiles/
 venv/
 tutorial-env/
 *.zip
+microservicio-ia/
+node_modules/

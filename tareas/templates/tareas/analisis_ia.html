@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis con IA – {{ tarea.titulo }}</title>
+</head>
+<body>
+    <h1>Análisis con IA</h1>
+    <h2>{{ tarea.titulo }}</h2>
+
+    {% if error_ia %}
+        <p role="alert"><strong>No se pudo generar el análisis.</strong> {{ error_ia }}</p>
+    {% else %}
+        <p><strong>Resumen:</strong> {{ analisis.resumen }}</p>
+        <p><strong>Prioridad sugerida:</strong> {{ analisis.prioridad|capfirst }}</p>
+
+        <h3>Subtareas sugeridas</h3>
+        <ol>
+            {% for paso in analisis.subtareas %}
+                <li>{{ paso }}</li>
+            {% empty %}
+                <li>La IA no sugirió subtareas.</li>
+            {% endfor %}
+        </ol>
+
+        {% if analisis.riesgos %}
+            <h3>Riesgos posibles</h3>
+            <ul>
+                {% for riesgo in analisis.riesgos %}
+                    <li>{{ riesgo }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p><small>Generado por el microservicio Node.js con el modelo {{ analisis.modelo }}. Es una sugerencia: revísala antes de usarla.</small></p>
+    {% endif %}
+
+    <p><a href="{% url 'detalle_tarea' tarea.pk %}">Volver a la tarea</a> |
+       <a href="{% url 'lista_tareas' %}">Volver a la lista</a></p>
+</body>
+</html>
