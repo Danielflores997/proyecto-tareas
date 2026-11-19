@@ -11,6 +11,11 @@
     <p><strong>Responsable:</strong> {{ tarea.responsable }}</p>
     <p><strong>Estado:</strong> {{ tarea.get_estado_display }}</p>
 
+    <form method="post" action="{% url 'analizar_tarea_ia' tarea.pk %}" onsubmit="var b=this.querySelector('button');b.disabled=true;b.textContent='Analizando con IA… puede tardar hasta 1 minuto';">
+        {% csrf_token %}
+        <button type="submit">Analizar con IA</button>
+    </form>
+
     {% if perms.tareas.change_tarea %}
         <p><a href="{% url 'editar_tarea' tarea.pk %}">Editar tarea</a></p>
     {% endif %}

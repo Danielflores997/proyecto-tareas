@@ -1,0 +1,20 @@
+{
+  "name": "microservicio-ia-gestor-tareas",
+  "version": "1.0.0",
+  "description": "Microservicio Node.js del Gestor de Tareas: analisis de tareas con IA generativa (Gemini) y documentacion Swagger/OpenAPI.",
+  "main": "src/server.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "openapi": "node scripts/exportar-openapi.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

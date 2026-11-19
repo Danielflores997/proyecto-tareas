@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen del equipo con IA</title>
+</head>
+<body>
+    <h1>Resumen del equipo con IA</h1>
+
+    {% if error_ia %}
+        <p role="alert"><strong>No se pudo generar el resumen.</strong> {{ error_ia }}</p>
+    {% else %}
+        <h2>Estadísticas</h2>
+        <ul>
+            <li>Total de tareas: {{ resumen.estadisticas.total }}</li>
+            <li>Pendientes: {{ resumen.estadisticas.porEstado.pendiente }}</li>
+            <li>En proceso: {{ resumen.estadisticas.porEstado.proceso }}</li>
+            <li>Completadas: {{ resumen.estadisticas.porEstado.completada }}</li>
+            <li>Avance: {{ resumen.estadisticas.porcentajeCompletado }}%</li>
+        </ul>
+
+        <h2>Resumen</h2>
+        <p>{{ resumen.resumen }}</p>
+
+        <h2>Recomendaciones</h2>
+        <ul>
+            {% for recomendacion in resumen.recomendaciones %}
+                <li>{{ recomendacion }}</li>
+            {% empty %}
+                <li>La IA no hizo recomendaciones.</li>
+            {% endfor %}
+        </ul>
+
+        <p><small>Generado por el microservicio Node.js con el modelo {{ resumen.modelo }}. Es una sugerencia: revísala antes de usarla.</small></p>
+    {% endif %}
+
+    <p><a href="{% url 'lista_tareas' %}">Volver a la lista</a></p>
+</body>
+</html>

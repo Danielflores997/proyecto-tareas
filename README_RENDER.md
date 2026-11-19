@@ -26,6 +26,12 @@ El archivo `settings.py` agrega automaticamente el hostname y la URL que Render 
 3. Comprueba los permisos del rol Miembro y del rol Administrador con usuarios preparados para la demostracion.
 4. Verifica tambien el inicio de sesion y el cierre de sesion.
 
+## Crear el usuario de /admin (sin shell)
+
+El plan gratuito de Render no tiene consola. En el servicio web, pestaña **Environment**, define `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL` y `DJANGO_SUPERUSER_PASSWORD`, y guarda para que se redespliegue. El Dockerfile crea el superusuario al arrancar. Si ya existe, lo ignora.
+
+Para un usuario con rol Administrador: entrar a `/admin/` > Usuarios > editar el usuario > agregarlo al grupo **Administrador**.
+
 ## Importante sobre el plan gratuito
 
 - El servicio web gratuito se suspende tras 15 minutos sin trafico y puede tardar cerca de un minuto en volver a responder.
@@ -42,3 +48,16 @@ docker compose up --build -d
 ```
 
 Abre `http://localhost:8000`.
+
+## Microservicio Node.js (Entrega 3)
+
+El Blueprint `render.yaml` incluye un segundo servicio web, `gestor-tareas-ia`, construido desde `microservicio-ia/Dockerfile`.
+
+1. **Sincronizar el Blueprint** en Render. Pedirá los valores marcados `sync: false`:
+   - En `gestor-tareas-ia`: `SERVICE_API_KEY` (una clave larga y aleatoria) y `GEMINI_API_KEY` (de https://aistudio.google.com/apikey).
+   - En `gestor-tareas-uninpahu`: `NODE_SERVICE_API_KEY` (**la misma** clave que `SERVICE_API_KEY`) y `NODE_SERVICE_URL` (la URL pública de `gestor-tareas-ia`, p. ej. `https://gestor-tareas-ia.onrender.com`; sin barra final).
+2. Esperar a que ambos servicios queden en **Deployed**.
+3. Abrir `<URL del microservicio>/api-docs` (Swagger público) y `<URL>/health` (debe mostrar `iaConfigurada: true`).
+4. En Django, abrir una tarea y pulsar **Analizar con IA**.
+
+Si falla: revisa que las dos claves sean idénticas, que `NODE_SERVICE_URL` no termine en `/` y que el servicio gratuito haya despertado (el primer intento puede tardar cerca de 1 minuto).

@@ -114,3 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+NODE_SERVICE_URL = os.environ.get('NODE_SERVICE_URL', 'http://localhost:3000').rstrip('/')
+NODE_SERVICE_API_KEY = os.environ.get('NODE_SERVICE_API_KEY', '')
+NODE_SERVICE_TIMEOUT = float(os.environ.get('NODE_SERVICE_TIMEOUT', '60'))
